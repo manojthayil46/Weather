@@ -1,0 +1,12 @@
+.daily_data {
+  display: flex;
+  overflow-x: scroll;
+}
+
+.daily_data::-webkit-scrollbar {
+  display: none;
+}
+.app {
+  text-align: center;
+  padding: 30px;
+}

@@ -1,0 +1,16 @@
+.press_humid {
+  display: flex;
+  justify-content: space-around;
+}
+
+.press_humid > p {
+  padding: 20px;
+  color: black;
+}
+
+.pressure,
+.humidity {
+  margin: 20px;
+  width: 100%;
+  background: rgba(75, 192, 192, 0.6);
+}

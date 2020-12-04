@@ -1,0 +1,21 @@
+.container {
+  margin: 10px;
+  width: 100%;
+  display: flex;
+  padding: 20px;
+  align-items: center;
+  justify-content: space-between;
+}
+.wrapper {
+  width: 150px;
+  height: 200px;
+  display: flex;
+  flex-direction: column;
+}
+.wrapper > img {
+  max-height: 200px;
+  width: 90px;
+  object-fit: contain;
+  margin-left: 25px;
+  margin-bottom: 15px;
+}
