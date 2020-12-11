@@ -9,8 +9,12 @@ function Chart(props) {
     useEffect(() => {
      
         chartFunc();
+        return () => {
+          console.log("clearing");
+        
+       }
        
-      }, []);
+      });
 
     const chartFunc = () =>{
       
