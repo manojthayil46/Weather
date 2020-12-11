@@ -31,7 +31,7 @@ function Search({ getFromSearch }) {
          <SearchIcon
           className={styles.header__searchIcon}  
           onClick={handleInput} 
-          className={styles.header__searchIcon} />
+          />
       
       {showError ? <h5>Please Enter a City Name default is Mumbai</h5> : <div></div>}
     </div>
