@@ -38,7 +38,7 @@ function Days(props) {
         return () => {
             console.log("unsubscribe");
         }
-    })
+    },[props.id])
     
     return (
         
