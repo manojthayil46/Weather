@@ -1,5 +1,3 @@
-import { act } from "react-dom/test-utils";
-
 const initialState = {
     cityName : 'mumbai',
     key : null,
@@ -53,12 +51,13 @@ const reducer = (state = initialState,action) => {
          return {
              ...state,
              isSearched : action.value
-         }   
+         }
+      default : return state;      
 
         
 
 }
-return state;
+
 };
 
 export default reducer;
