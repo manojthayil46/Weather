@@ -1,29 +1,40 @@
 import React, { useState } from "react";
 import styles from "./Search.module.css";
+import SearchIcon from "@material-ui/icons/Search";
 
-function Search({ getCityName }) {
+function Search({ getFromSearch }) {
   const [cityName, setCityName] = useState("");
   const [showError, setShowError] = useState(false);
+
+
   const handleInput = () => {
     if (cityName === "") {
       setShowError(true);
     } else {
-      getCityName(cityName);
+      getFromSearch(cityName,true);
     }
   };
+
+
   return (
     <div className = {styles.Search}>
+      <div className = "middle">
       <input
         type="text"
         placeholder="Enter A city name to search...."
         value={cityName}
         onChange={(e) => setCityName(e.target.value)}
         className={styles.InputBox}
-      ></input>
-      <button type="submit" onClick={handleInput} className={styles.SearchBtn}>
-        Search
-      </button>
+         ></input>
+
+         
+         <SearchIcon
+          className={styles.header__searchIcon}  
+          onClick={handleInput} 
+          className={styles.header__searchIcon} />
+      
       {showError ? <h5>Please Enter a City Name default is Mumbai</h5> : <div></div>}
+    </div>
     </div>
   );
 }

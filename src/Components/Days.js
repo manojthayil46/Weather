@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import styles from "./Days.module.css";
 
 
+
 function Days(props) {
+  
     const [Icon, setIcon] = useState('');
     let tempInCelsius = Math.floor(props.day.temp.max - 273);
+    
 
     useEffect(() => {
         switch(true){
@@ -44,7 +48,7 @@ function Days(props) {
             <p>Sunday</p>
             <p>{tempInCelsius} ℃</p>
             <img src = {Icon} alt="not available"/>
-            <p>{props.description}</p>
+            <p>{props.day.weather[0].description}</p>
                 
             </div>
            
@@ -52,4 +56,9 @@ function Days(props) {
     )
 }
 
+
+
+
 export default Days
+
+

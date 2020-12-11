@@ -1,101 +1,99 @@
-import React, { Component } from 'react';
-import axios from 'axios';
-import Search from './Components/Search';
-import Days from './Components/Days';
-import styles from './App.module.css';
-import Chart from './Components/Chart.js'
-const API_KEY = "ef0d6ed3298e2719d7764e3955b48fda";
+import React, { Component } from "react";
+import axios from "axios";
+import Search from "./Components/Search";
+import Days from "./Components/Days";
+import styles from "./App.module.css";
+import Chart from "./Components/Chart.js";
+import { connect } from "react-redux";
+const API_KEY = "4c99be4d39baa4dbbc593d7f47aad8d6";
 
-
-export default class App extends Component {
+class App extends Component {
   temparray = [];
-  state = {
-    daily : [],
-    hourly : [],
-    cityName: "Mumbai",
-    isSearched: false,
-    lon :'72.8479',
-    lat:'19.0144',
-    temp : '',
-    pressure : '',
-    humidity : ''
-    
-  }
-  
-  componentDidMount = () =>{
-    this.fetchWeatherDetails(this.state.cityName);
+
+  fetchWeatherDetails() {
+    axios
+      .get(
+        `http://api.openweathermap.org/data/2.5/weather?q=${this.props.getCityName}&appid=` +
+          API_KEY
+      )
+      .then((response) => {
+        console.log(response);
+        this.props.weatherData(response.data);
+        return response;
+      })
+      .then((dataold) => {
+        axios
+          .get(
+            `https://api.openweathermap.org/data/2.5/onecall?lat=${this.props.latitude}&lon=${this.props.longitude}&appid=` +
+              API_KEY
+          )
+          .then((response2) => {
+            this.props.weatherDailyData(response2.data);
+            return response2;
+          })
+          .then((response3) => {
+            for (let i = 0; i < 24; i++) {
+              this.temparray.push(Math.floor(this.props.hourly[i].temp - 273)); //converting Kelvin into Celsius
+            }
+            return response3;
+          });
+      });
   }
 
-  componentDidUpdate(){
-    if (this.state.isSearched) {
+  componentDidMount() {
+    this.fetchWeatherDetails();
+  }
+
+  componentDidUpdate() {
+    if (this.props.isSearched) {
       this.fetchWeatherDetails();
-      this.setState({
-        isSearched: false,
-      });
+      this.props.setIsSearched(false);
     }
   }
 
-  
-  fetchWeatherDetails = () => {
-    axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${this.state.cityName}&appid=` +API_KEY).then(response => {
-      
-      this.setState({
-        cityData: response.data.name,
-        temp : response.data.main.temp,
-        lat : response.data.coord.lat,
-        lon : response.data.coord.lon,
-        pressure : response.data.main.pressure,
-        humidity : response.data.main.humidity
-        
-      },() =>{
-      axios.get(`https://api.openweathermap.org/data/2.5/onecall?lat=${this.state.lat}&lon=${this.state.lat}&appid=${API_KEY}`).then(response => {
-      this.setState({
-        daily : response.data.daily,
-        hourly : response.data.hourly
-      },() =>{
-        for(let i = 0 ; i < 24; i++){
-          this.temparray.push(Math.floor(this.state.hourly[i].temp - 273)); //converting Kelvin into Celsius
-        }
-
-      })
-
-    })
-      });
-    })
-  }
-//This will get the city name from the search input and update the state
-  getCityName = (cityName) => {
-    this.setState({
-      cityName: cityName,
-      isSearched: true,
-    });
-  };
-
   render() {
-    return ( 
-      
-      <div className = {styles.app}>
-        
-        <Search getCityName={this.getCityName} />
+    return (
+      <div className={styles.app}>
+        <Search getFromSearch={this.props.setCityName} />
 
-        <div className = {styles.daily_data}>
-         {this.state.daily.map(day => 
-        <Days 
-        key = {day.clouds} 
-        day = {day}
-        id = {day.weather[0].id}
-        description = {day.weather[0].description} />
-        )}       
+        <div className={styles.daily_data}>
+          {this.props.getWeatherDailyData.map((day) => (
+            <Days key={day.clouds} day={day} id={day.weather[0].id} />
+          ))}
         </div>
 
-        <Chart 
-        temparray = {this.temparray}
-        temp = {this.state.temp}
-        pressure = {this.state.pressure}
-        humidity = {this.state.humidity} />
+        <Chart
+          temparray={this.temparray}
+          temp={this.props.temp}
+          pressure={this.props.pressure}
+          humidity={this.props.humidity}
+        />
       </div>
-      
-     
-    )
+    );
   }
 }
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setCityName:      (cityName, isSearched)  =>dispatch({type: "CITY_NAME",value: { cityName: cityName, isSearched: isSearched },}),
+    weatherData:      (data)                  => dispatch({ type: "WEATHER_DATA", value: data }),
+    weatherDailyData: (weatherDailyData)      =>dispatch({ type: "WEATHER_DAILY_DATA", value: weatherDailyData }),
+    setIsSearched:    (isSearched)            => dispatch({ type: "IS_SEARCHED", value: isSearched })
+    
+  };
+};
+
+const mapStateToProps = (state) => {
+  return {
+    getCityName: state.cityName,
+    latitude: state.lat,
+    longitude: state.lon,
+    getWeatherDailyData: state.daily,
+    humidity: state.humidity,
+    pressure: state.pressure,
+    hourly: state.hourly,
+    temp: state.temp,
+    isSearched: state.isSearched,
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(App);
